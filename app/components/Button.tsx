@@ -1,22 +1,21 @@
-import React, {useState} from "react";
+import React from "react";
 
-export default function Button() {
-    const [word, setWord] = useState(null)
-    console.log(word)
+type ButtonProps = {
+  handleClick: () => void;
+  text: string;
+  disabled: true | false;
+};
 
-    async function handleClick() {
-        try {
-          const resp = await fetch(
-            "https://random-word-api.vercel.app/api?words=1&length=5"
-          );
-          const data = await resp.json();
-          setWord(data)
-        } catch (error) {
-          console.log(error);
-        }
-    }
+const Button: React.FC<ButtonProps> = ({ handleClick, text, disabled }) => {
+  return (
+    <button
+      disabled={disabled}
+      onClick={handleClick}
+      className="border border-2 rounded px-2 w-max"
+    >
+      {text}
+    </button>
+  );
+};
 
-    return (
-        <button onClick={handleClick} className="border border-2 rounded px-2 w-max">Generate Word</button>
-    )
-}
+export default Button;
