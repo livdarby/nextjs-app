@@ -1,5 +1,6 @@
 "use client";
 import Button from "@/components/Button";
+import Lines from "./components/Lines";
 import React, { useState, useEffect } from "react";
 import Keyboard from "./components/Keyboard";
 
@@ -127,37 +128,12 @@ export default function Home() {
           disabled={false}
         />
       </div>
-      <div className="flex justify-around my-5">
-        <div
-          className={`uppercase bg-${colours[0]}-200 w-16 h-16 flex items-center justify-center`}
-        >
-          {selectedLetters && selectedLetters[0]}
-        </div>
-        <div
-          className={`uppercase bg-${colours[1]}-200 w-16 h-16 flex items-center justify-center`}
-        >
-          {" "}
-          {selectedLetters && selectedLetters[1]}
-        </div>
-        <div
-          className={`uppercase bg-${colours[2]}-200 w-16 h-16 flex items-center justify-center`}
-        >
-          {" "}
-          {selectedLetters && selectedLetters[2]}
-        </div>
-        <div
-          className={`uppercase bg-${colours[3]}-200 w-16 h-16 flex items-center justify-center`}
-        >
-          {" "}
-          {selectedLetters && selectedLetters[3]}
-        </div>
-        <div
-          className={`uppercase bg-${colours[4]}-200 w-16 h-16 flex items-center justify-center`}
-        >
-          {" "}
-          {selectedLetters && selectedLetters[4]}
-        </div>
-      </div>
+      <Lines colours={colours} letters={selectedLetters}/>
+      <Lines colours={colours} letters={selectedLetters}/>
+      <Lines colours={colours} letters={selectedLetters}/>
+      <Lines colours={colours} letters={selectedLetters}/>
+      <Lines colours={colours} letters={selectedLetters}/>
+      <Lines colours={colours} letters={selectedLetters}/>
       <p className="uppercase text-center tracking-widest font-bold">{word}</p>
       <Keyboard handleLetterSelect={handleLetterSelect} />
       <div className="flex justify-center gap-4 my-5">
