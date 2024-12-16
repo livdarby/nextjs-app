@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ErrorBoundary } from "react-error-boundary";
+import Error from "./dashboard/error";
+import NavLinks from "./dashboard/nav-links";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,13 +24,16 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>
+) {
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <NavLinks/>
+        <ErrorBoundary FallbackComponent={Error}>{children}</ErrorBoundary>
       </body>
     </html>
   );
