@@ -112,6 +112,7 @@ export default function Home() {
     }
 
     setColours(coloursCopy);
+    
   }
 
   function handleBack() {
@@ -128,12 +129,16 @@ export default function Home() {
           disabled={false}
         />
       </div>
-      <Lines colours={colours} letters={selectedLetters}/>
-      <Lines colours={colours} letters={selectedLetters}/>
-      <Lines colours={colours} letters={selectedLetters}/>
-      <Lines colours={colours} letters={selectedLetters}/>
-      <Lines colours={colours} letters={selectedLetters}/>
-      <Lines colours={colours} letters={selectedLetters}/>
+      {colours && (
+        <>
+          <Lines colours={colours} letters={selectedLetters} />
+          <Lines colours={colours} letters={selectedLetters} />
+          <Lines colours={colours} letters={selectedLetters} />
+          <Lines colours={colours} letters={selectedLetters} />
+          <Lines colours={colours} letters={selectedLetters} />
+        </>
+      )}
+
       <p className="uppercase text-center tracking-widest font-bold">{word}</p>
       <Keyboard handleLetterSelect={handleLetterSelect} />
       <div className="flex justify-center gap-4 my-5">
