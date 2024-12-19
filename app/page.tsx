@@ -9,13 +9,8 @@ export default function Home() {
   const [splitWord, setSplitWord] = useState<string[]>([]);
   const [selectedLetters, setSelectedLetters] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [colours, setColours] = useState<{ [key: string]: string }>({
-    0: "gray",
-    1: "gray",
-    2: "gray",
-    3: "gray",
-    4: "gray",
-  });
+  const [colours, setColours] = useState<string[]>([]);
+  const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
   console.log(colours);
 
   async function handleClick() {
@@ -25,13 +20,8 @@ export default function Home() {
       );
       const data = await resp.json();
       setWord(data[0]);
-      setColours({
-        0: "gray",
-        1: "gray",
-        2: "gray",
-        3: "gray",
-        4: "gray",
-      });
+      setColours([]);
+      setPreviousGuesses([]);
       setSelectedLetters([]);
     } catch (error) {
       console.log(error);
@@ -39,16 +29,35 @@ export default function Home() {
   }
 
   async function checkWord() {
+    const guessIndices = [
+      [0, 5],
+      [5, 10],
+      [10, 15],
+      [15, 20],
+      [20, 25],
+    ];
+    let currentGuessIndices = null;
+    if (!previousGuesses[0]) {
+      currentGuessIndices = guessIndices[0];
+    } else {
+      currentGuessIndices = guessIndices[previousGuesses[0].length / 5];
+    }
+    const lettersToCheck = selectedLetters.slice(
+      currentGuessIndices[0],
+      currentGuessIndices[1]
+    );
+    // console.log("letters to check ", lettersToCheck)
     try {
       const resp = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${selectedLetters.join(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${lettersToCheck.join(
           ""
         )}`
       );
+      console.log(resp);
       if (!resp.ok) {
         setErrorMessage("Not a valid word");
         return;
-      } else if (selectedLetters.join("") === word) {
+      } else if (lettersToCheck.join("") === word) {
         console.log("correct guess");
       }
     } catch (error) {
@@ -67,7 +76,7 @@ export default function Home() {
     const selectedLettersCopy = structuredClone(selectedLetters);
     if (!selectedLettersCopy) {
       setSelectedLetters([letter]);
-    } else if (selectedLetters.length < 5) {
+    } else if (selectedLetters.length < 25) {
       setSelectedLetters([...selectedLettersCopy, letter]);
     }
   }
@@ -75,24 +84,37 @@ export default function Home() {
   function handleSubmit() {
     checkWord();
 
-    const coloursCopy = structuredClone(colours) as { [key: string]: string };
+    const coloursCopy = structuredClone(colours) as string[];
     const usedLetters = Array(splitWord.length).fill(false); // Track used letters in splitWord
 
     // First pass: Mark greens
-    for (let i = 0; i < splitWord.length; i++) {
-      if (selectedLetters[i] === splitWord[i]) {
-        coloursCopy[i.toString()] = "green";
+
+    let lettersToCheck = null;
+    if (!previousGuesses[0]) {
+      lettersToCheck = selectedLetters;
+    } else {
+      lettersToCheck = selectedLetters.slice(
+        previousGuesses[0].length,
+        previousGuesses[0].length + 5
+      );
+    }
+
+    console.log("letters to check: ", lettersToCheck);
+
+    for (let i = 0; i < lettersToCheck.length; i++) {
+      if (lettersToCheck[i] === splitWord[i]) {
+        coloursCopy[i] = "green";
         usedLetters[i] = true; // Mark this letter as used
       }
     }
 
     // Second pass: Mark yellows and reds
-    for (let i = 0; i < splitWord.length; i++) {
-      if (coloursCopy[i.toString()] === "green") {
+    for (let i = 0; i < lettersToCheck.length; i++) {
+      if (coloursCopy[i] === "green") {
         continue; // Skip greens
       }
 
-      const currentLetter = selectedLetters[i];
+      const currentLetter = lettersToCheck[i];
 
       if (splitWord.includes(currentLetter)) {
         // Check for an unused match in splitWord
@@ -101,18 +123,21 @@ export default function Home() {
         );
 
         if (unusedIndex !== -1) {
-          coloursCopy[i.toString()] = "yellow";
+          coloursCopy[i] = "yellow";
           usedLetters[unusedIndex] = true; // Mark as used
         } else {
-          coloursCopy[i.toString()] = "slate"; // No unused match
+          coloursCopy[i] = "gray"; // No unused match
         }
       } else {
-        coloursCopy[i.toString()] = "slate"; // Letter doesn't exist in splitWord
+        coloursCopy[i] = "gray"; // Letter doesn't exist in splitWord
       }
     }
-
-    setColours(coloursCopy);
-    
+    setPreviousGuesses([selectedLetters.join("")]);
+    if (colours.length === 0) {
+      setColours(coloursCopy);
+    } else {
+      setColours([...colours, ...coloursCopy]);
+    }
   }
 
   function handleBack() {
@@ -129,15 +154,28 @@ export default function Home() {
           disabled={false}
         />
       </div>
-      {colours && (
-        <>
-          <Lines colours={colours} letters={selectedLetters} />
-          <Lines colours={colours} letters={selectedLetters} />
-          <Lines colours={colours} letters={selectedLetters} />
-          <Lines colours={colours} letters={selectedLetters} />
-          <Lines colours={colours} letters={selectedLetters} />
-        </>
-      )}
+      <>
+        <Lines
+          colours={colours.slice(0, 5)}
+          letters={selectedLetters.slice(0, 5)}
+        />
+        <Lines
+          colours={colours.slice(5, 10)}
+          letters={selectedLetters.slice(5, 10)}
+        />
+        <Lines
+          colours={colours.slice(10, 15)}
+          letters={selectedLetters.slice(10, 15)}
+        />
+        <Lines
+          colours={colours.slice(15, 20)}
+          letters={selectedLetters.slice(15, 20)}
+        />
+        <Lines
+          colours={colours.slice(20, 25)}
+          letters={selectedLetters.slice(20, 25)}
+        />
+      </>
 
       <p className="uppercase text-center tracking-widest font-bold">{word}</p>
       <Keyboard handleLetterSelect={handleLetterSelect} />
@@ -145,7 +183,8 @@ export default function Home() {
         <Button
           handleClick={handleSubmit}
           text={"ENTER"}
-          disabled={selectedLetters.length !== 5}
+          // disabled={selectedLetters.length !== 5}
+          disabled={false}
         />
         <Button handleClick={handleBack} text={"BACK"} disabled={false} />
       </div>

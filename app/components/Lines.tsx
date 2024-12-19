@@ -1,6 +1,6 @@
 type LinesProps = {
   //   handleClick: () => void;
-  colours: { [key: string]: string };
+  colours: string[];
   letters: string[];
 };
 
@@ -10,7 +10,7 @@ const Lines = ({ colours, letters }: LinesProps) => {
       <div
         className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={
-          colours
+          colours[0]
             ? { backgroundColor: colours[0] }
             : { backgroundColor: "#e5e7eb" }
         }
@@ -18,47 +18,43 @@ const Lines = ({ colours, letters }: LinesProps) => {
         {letters && letters[0]}
       </div>
       <div
-        className={`uppercase bg-${colours[1]}-200 w-16 h-16 flex items-center justify-center`}
+        className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={
-          colours
+          colours[1]
             ? { backgroundColor: colours[1] }
             : { backgroundColor: "#e5e7eb" }
         }
       >
-        {" "}
         {letters && letters[1]}
       </div>
       <div
-        className={`uppercase bg-${colours[2]}-200 w-16 h-16 flex items-center justify-center`}
+        className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={
-          colours
+          colours[2]
             ? { backgroundColor: colours[2] }
             : { backgroundColor: "#e5e7eb" }
         }
       >
-        {" "}
         {letters && letters[2]}
       </div>
       <div
-        className={`uppercase bg-${colours[3]}-200 w-16 h-16 flex items-center justify-center`}
+        className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={
-          colours
+          colours[3]
             ? { backgroundColor: colours[3] }
             : { backgroundColor: "#e5e7eb" }
         }
       >
-        {" "}
         {letters && letters[3]}
       </div>
       <div
-        className={`uppercase bg-${colours[4]}-200 w-16 h-16 flex items-center justify-center`}
+        className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={
-          colours
+          colours[4]
             ? { backgroundColor: colours[4] }
             : { backgroundColor: "#e5e7eb" }
         }
       >
-        {" "}
         {letters && letters[4]}
       </div>
     </div>
