@@ -11,7 +11,9 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [colours, setColours] = useState<string[]>([]);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
-  console.log(colours);
+  const [alphabetMap, setAlphabetMap] = useState<{ letter: string } | null>(
+    null
+  );
 
   async function handleClick() {
     try {
@@ -46,7 +48,6 @@ export default function Home() {
       currentGuessIndices[0],
       currentGuessIndices[1]
     );
-    // console.log("letters to check ", lettersToCheck)
     try {
       const resp = await fetch(
         `https://api.dictionaryapi.dev/api/v2/entries/en/${lettersToCheck.join(
@@ -84,7 +85,7 @@ export default function Home() {
   function handleSubmit() {
     checkWord();
 
-    const coloursCopy = structuredClone(colours) as string[];
+    const coloursCopy = [] as string[];
     const usedLetters = Array(splitWord.length).fill(false); // Track used letters in splitWord
 
     // First pass: Mark greens
@@ -98,8 +99,6 @@ export default function Home() {
         previousGuesses[0].length + 5
       );
     }
-
-    console.log("letters to check: ", lettersToCheck);
 
     for (let i = 0; i < lettersToCheck.length; i++) {
       if (lettersToCheck[i] === splitWord[i]) {
@@ -177,7 +176,7 @@ export default function Home() {
         />
       </>
 
-      <p className="uppercase text-center tracking-widest font-bold">{word}</p>
+      {/* <p className="uppercase text-center tracking-widest font-bold">{word}</p> */}
       <Keyboard handleLetterSelect={handleLetterSelect} />
       <div className="flex justify-center gap-4 my-5">
         <Button
