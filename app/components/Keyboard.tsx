@@ -14,11 +14,14 @@ const Keyboard: React.FC<KeyboardProps> = ({
   return (
     <div className="flex flex-wrap justify-center gap-2 my-6">
       {alphabet.map((letter) => {
-        const letterObject: { letter: string; colour: string } | undefined =
-          letterColourArray.find((element) => {
+        const letterObject: { letter: string; colour: string }[] | undefined =
+          letterColourArray.filter((element) => {
             return element.letter === letter;
           });
-        const colour = letterObject ? letterObject.colour : "#e5e7eb";
+        const colour =
+          letterObject.length > 0
+            ? letterObject[letterObject.length - 1].colour
+            : "#e5e7eb";
         return (
           <div
             key={letter}

@@ -29,6 +29,7 @@ export default function Home() {
       setPreviousGuesses([]);
       setSelectedLetters([]);
       setletterColourArray([]);
+      setErrorMessage("");
     } catch (error) {
       console.log(error);
     }
@@ -58,10 +59,11 @@ export default function Home() {
           ""
         )}`
       );
-      console.log(resp);
-      if (!resp.ok) {
+      const data = await resp.json();
+      console.log(data);
+      if (data.title === "No Definitions Found") {
         setErrorMessage("Not a valid word");
-        return;
+        return false;
       } else if (lettersToCheck.join("") === word) {
         console.log("correct guess");
       }
@@ -85,8 +87,11 @@ export default function Home() {
     }
   }
 
-  function handleSubmit() {
-    checkWord();
+  async function handleSubmit() {
+    const wordDefinition = await checkWord();
+    if (wordDefinition === false) {
+      return false;
+    }
 
     const coloursCopy = [] as string[];
     const usedLetters = Array(splitWord.length).fill(false); // Track used letters in splitWord
@@ -106,12 +111,26 @@ export default function Home() {
 
     for (let i = 0; i < lettersToCheck.length; i++) {
       if (lettersToCheck[i] === splitWord[i]) {
-        coloursCopy[i] = "#7bb778";
+        coloursCopy[i] = "#7bb778"; // Green
         usedLetters[i] = true; // Mark this letter as used
-        letterColourArrayCopy.push({
-          letter: lettersToCheck[i],
-          colour: "#7bb778",
+        // check if letterColourArray already contains the letter
+        // If it does, update its colour to green
+        const letterAlreadyFound = letterColourArrayCopy.find((element) => {
+          return element.letter === lettersToCheck[i];
         });
+        if (letterAlreadyFound) {
+          const objIndex = letterColourArrayCopy.findIndex(
+            (obj) => obj.letter === lettersToCheck[i]
+          );
+          letterColourArrayCopy[objIndex].colour = "#7bb778";
+          setletterColourArray(letterColourArrayCopy);
+        } else {
+          letterColourArrayCopy.push({
+            letter: lettersToCheck[i],
+            colour: "#7bb778",
+          });
+          setletterColourArray(letterColourArrayCopy);
+        }
       }
     }
 
@@ -130,25 +149,38 @@ export default function Home() {
         );
 
         if (unusedIndex !== -1) {
-          coloursCopy[i] = "#dbbd42";
+          // if letter has already been found and the colour is green,
+          // leave the colour as green
+          // else the colour is yellow
+
+          coloursCopy[i] = "#dbbd42"; // yellow
           usedLetters[unusedIndex] = true; // Mark as used
-          letterColourArrayCopy.push({
-            letter: lettersToCheck[i],
-            colour: "#dbbd42",
+          const letterAlreadyFound = letterColourArrayCopy.find((element) => {
+            return element.letter === lettersToCheck[i];
           });
+          if (!letterAlreadyFound) {
+            letterColourArrayCopy.push({
+              letter: lettersToCheck[i],
+              colour: "#dbbd42", // yellow
+            });
+          }
         } else {
           coloursCopy[i] = "#787d80"; // No unused match
-          letterColourArrayCopy.push({
-            letter: lettersToCheck[i],
-            colour: "#787d80",
-          });
         }
       } else {
         coloursCopy[i] = "#787d80"; // Letter doesn't exist in splitWord
-        letterColourArrayCopy.push({
-          letter: lettersToCheck[i],
-          colour: "#787d80",
+        // if letter already exists, leave the colour
+        // if not, update the colour to gray
+        const letterAlreadyFound = letterColourArrayCopy.find((element) => {
+          return element.letter === lettersToCheck[i];
         });
+        if (!letterAlreadyFound) {
+          letterColourArrayCopy.push({
+            letter: lettersToCheck[i],
+            colour: "#787d80", // gray
+          });
+          setletterColourArray(letterColourArrayCopy)
+        }
       }
     }
     setPreviousGuesses([selectedLetters.join("")]);
@@ -161,6 +193,7 @@ export default function Home() {
   }
 
   function handleBack() {
+    setErrorMessage("");
     const newLetters = selectedLetters.slice(0, selectedLetters.length - 1);
     setSelectedLetters(newLetters);
   }
@@ -196,8 +229,8 @@ export default function Home() {
           letters={selectedLetters.slice(20, 25)}
         />
       </>
-
-      {/* <p className="uppercase text-center tracking-widest font-bold">{word}</p> */}
+      <p className="text-center text-lg">{errorMessage}</p>
+      <p className="uppercase text-center tracking-widest font-bold">{word}</p>
       <Keyboard
         handleLetterSelect={handleLetterSelect}
         letterColourArray={letterColourArray}
@@ -211,7 +244,6 @@ export default function Home() {
         />
         <Button handleClick={handleBack} text={"BACK"} disabled={false} />
       </div>
-      <p>{errorMessage}</p>
     </>
   );
 }
