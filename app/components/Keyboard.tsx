@@ -25,13 +25,12 @@ const Keyboard: React.FC<KeyboardProps> = ({
             : "#e5e7eb";
         return (
           <>
-            {" "}
             <div
               key={letter}
               id={letter}
               className={
                 "uppercase h-[50px] flex justify-center rounded items-center text-lg font-bold " +
-                (firstKeyboardLine.includes(letter) ? "w-[32px]" : "w-[35px]")
+                (firstKeyboardLine.includes(letter) ? "w-[32px]" : "w-[36px]")
               }
               style={{ backgroundColor: colour }}
               onClick={() => handleLetterSelect(letter)} // Use an arrow function here
