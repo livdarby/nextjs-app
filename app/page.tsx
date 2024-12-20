@@ -230,7 +230,7 @@ export default function Home() {
         />
       </>
       <p className="text-center text-lg">{errorMessage}</p>
-      <p className="uppercase text-center tracking-widest font-bold">{word}</p>
+      {/* <p className="uppercase text-center tracking-widest font-bold">{word}</p> */}
       <Keyboard
         handleLetterSelect={handleLetterSelect}
         letterColourArray={letterColourArray}

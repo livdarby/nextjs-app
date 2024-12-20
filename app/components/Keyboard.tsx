@@ -10,9 +10,10 @@ const Keyboard: React.FC<KeyboardProps> = ({
   letterColourArray,
 }) => {
   const alphabet = "qwertyuiopasdfghjklzxcvbnm".split("");
+  const firstKeyboardLine = "qwertyuiop".split("");
 
   return (
-    <div className="flex flex-wrap justify-center gap-2 my-6">
+    <div className="flex flex-wrap justify-center gap-2 my-6 w-[100%] mx-auto">
       {alphabet.map((letter) => {
         const letterObject: { letter: string; colour: string }[] | undefined =
           letterColourArray.filter((element) => {
@@ -23,15 +24,21 @@ const Keyboard: React.FC<KeyboardProps> = ({
             ? letterObject[letterObject.length - 1].colour
             : "#e5e7eb";
         return (
-          <div
-            key={letter}
-            id={letter}
-            className="uppercase w-12 text-center text-lg font-bold"
-            style={{ backgroundColor: colour }}
-            onClick={() => handleLetterSelect(letter)} // Use an arrow function here
-          >
-            {letter}
-          </div>
+          <>
+            {" "}
+            <div
+              key={letter}
+              id={letter}
+              className={
+                "uppercase h-[50px] flex justify-center rounded items-center text-lg font-bold " +
+                (firstKeyboardLine.includes(letter) ? "w-[32px]" : "w-[35px]")
+              }
+              style={{ backgroundColor: colour }}
+              onClick={() => handleLetterSelect(letter)} // Use an arrow function here
+            >
+              {letter}
+            </div>
+          </>
         );
       })}
     </div>
