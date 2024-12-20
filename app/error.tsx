@@ -1,7 +1,11 @@
 // app/error.js
 "use client";
+type ErrorProps = {
+  error: { message: string };
+  reset: () => void;
+};
 
-export default function Error({ error, reset }) {
+export default function Error({ error, reset } : ErrorProps) {
   return (
     <div>
       <h2>Something went wrong!</h2>
