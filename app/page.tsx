@@ -11,9 +11,12 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [colours, setColours] = useState<string[]>([]);
   const [previousGuesses, setPreviousGuesses] = useState<string[]>([]);
-  const [alphabetMap, setAlphabetMap] = useState<{ letter: string } | null>(
-    null
-  );
+  const [letterColourArray, setletterColourArray] = useState<
+    {
+      letter: string;
+      colour: string;
+    }[]
+  >([]);
 
   async function handleClick() {
     try {
@@ -25,6 +28,7 @@ export default function Home() {
       setColours([]);
       setPreviousGuesses([]);
       setSelectedLetters([]);
+      setletterColourArray([]);
     } catch (error) {
       console.log(error);
     }
@@ -72,8 +76,7 @@ export default function Home() {
     }
   }, [word]);
 
-  function handleLetterSelect(e: React.MouseEvent<HTMLDivElement>) {
-    const letter = (e.target as HTMLDivElement).id;
+  function handleLetterSelect(letter: string) {
     const selectedLettersCopy = structuredClone(selectedLetters);
     if (!selectedLettersCopy) {
       setSelectedLetters([letter]);
@@ -87,6 +90,7 @@ export default function Home() {
 
     const coloursCopy = [] as string[];
     const usedLetters = Array(splitWord.length).fill(false); // Track used letters in splitWord
+    const letterColourArrayCopy = structuredClone(letterColourArray);
 
     // First pass: Mark greens
 
@@ -102,14 +106,18 @@ export default function Home() {
 
     for (let i = 0; i < lettersToCheck.length; i++) {
       if (lettersToCheck[i] === splitWord[i]) {
-        coloursCopy[i] = "green";
+        coloursCopy[i] = "#7bb778";
         usedLetters[i] = true; // Mark this letter as used
+        letterColourArrayCopy.push({
+          letter: lettersToCheck[i],
+          colour: "#7bb778",
+        });
       }
     }
 
     // Second pass: Mark yellows and reds
     for (let i = 0; i < lettersToCheck.length; i++) {
-      if (coloursCopy[i] === "green") {
+      if (coloursCopy[i] === "#7bb778") {
         continue; // Skip greens
       }
 
@@ -122,13 +130,25 @@ export default function Home() {
         );
 
         if (unusedIndex !== -1) {
-          coloursCopy[i] = "yellow";
+          coloursCopy[i] = "#dbbd42";
           usedLetters[unusedIndex] = true; // Mark as used
+          letterColourArrayCopy.push({
+            letter: lettersToCheck[i],
+            colour: "#dbbd42",
+          });
         } else {
-          coloursCopy[i] = "gray"; // No unused match
+          coloursCopy[i] = "#787d80"; // No unused match
+          letterColourArrayCopy.push({
+            letter: lettersToCheck[i],
+            colour: "#787d80",
+          });
         }
       } else {
-        coloursCopy[i] = "gray"; // Letter doesn't exist in splitWord
+        coloursCopy[i] = "#787d80"; // Letter doesn't exist in splitWord
+        letterColourArrayCopy.push({
+          letter: lettersToCheck[i],
+          colour: "#787d80",
+        });
       }
     }
     setPreviousGuesses([selectedLetters.join("")]);
@@ -137,6 +157,7 @@ export default function Home() {
     } else {
       setColours([...colours, ...coloursCopy]);
     }
+    setletterColourArray(letterColourArrayCopy);
   }
 
   function handleBack() {
@@ -177,7 +198,10 @@ export default function Home() {
       </>
 
       {/* <p className="uppercase text-center tracking-widest font-bold">{word}</p> */}
-      <Keyboard handleLetterSelect={handleLetterSelect} />
+      <Keyboard
+        handleLetterSelect={handleLetterSelect}
+        letterColourArray={letterColourArray}
+      />
       <div className="flex justify-center gap-4 my-5">
         <Button
           handleClick={handleSubmit}

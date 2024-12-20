@@ -6,7 +6,7 @@ type LinesProps = {
 
 const Lines = ({ colours, letters }: LinesProps) => {
   return (
-    <div className="flex justify-center gap-2 my-2">
+    <div className="flex justify-center gap-2 my-2 text-2xl font-bold">
       <div
         className={`uppercase w-16 h-16 flex items-center justify-center`}
         style={

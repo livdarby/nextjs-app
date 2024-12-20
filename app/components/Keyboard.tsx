@@ -1,21 +1,31 @@
-import { MouseEventHandler } from "react";
+import React from "react";
 
-function Keyboard({
+interface KeyboardProps {
+  handleLetterSelect: (letter: string) => void;
+  letterColourArray: { letter: string; colour: string }[];
+}
+
+const Keyboard: React.FC<KeyboardProps> = ({
   handleLetterSelect,
-}: {
-  handleLetterSelect: MouseEventHandler<HTMLDivElement>;
-}) {
+  letterColourArray,
+}) => {
   const alphabet = "qwertyuiopasdfghjklzxcvbnm".split("");
 
   return (
-    <div className="flex flex-wrap justify-center gap-2">
+    <div className="flex flex-wrap justify-center gap-2 my-6">
       {alphabet.map((letter) => {
+        const letterObject: { letter: string; colour: string } | undefined =
+          letterColourArray.find((element) => {
+            return element.letter === letter;
+          });
+        const colour = letterObject ? letterObject.colour : "#e5e7eb";
         return (
           <div
-            onClick={handleLetterSelect}
-            className="uppercase w-8 text-center bg-gray-200"
             key={letter}
-            id = {letter}
+            id={letter}
+            className="uppercase w-12 text-center text-lg font-bold"
+            style={{ backgroundColor: colour }}
+            onClick={() => handleLetterSelect(letter)} // Use an arrow function here
           >
             {letter}
           </div>
@@ -23,6 +33,6 @@ function Keyboard({
       })}
     </div>
   );
-}
+};
 
 export default Keyboard;
