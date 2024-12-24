@@ -35,6 +35,10 @@ export default function Home() {
     }
   }
 
+  useEffect(() => {
+    handleClick();
+  }, []);
+
   async function checkWord() {
     const guessIndices = [
       [0, 5],
@@ -179,7 +183,7 @@ export default function Home() {
             letter: lettersToCheck[i],
             colour: "#787d80", // gray
           });
-          setletterColourArray(letterColourArrayCopy)
+          setletterColourArray(letterColourArrayCopy);
         }
       }
     }
